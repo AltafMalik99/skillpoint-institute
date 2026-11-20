@@ -247,6 +247,7 @@ const tstat = async (id, joined) => {
   for (const d of workdays(joined || today(), lastClosed())) if (!rec.has(d)) rows.push({ date: d, check_in: null, check_out: null, status: 'Absent', auto: 1 });
   return rows.filter(r => !isSun(r.date)).sort((a, b) => b.date.localeCompare(a.date))
 };
+// ..........................
 app.get('/api/teacher-attendance', auth('admin', 'teacher'), async (q, s) => {
   if (q.user.role === 'teacher') return s.json((await tstat(q.user.id, (await P('select admission_date d from users where id=?').get(q.user.id)).d)).slice(0, 120).map(r => ({ ...r, name: q.user.name })));
   const d = isDate(q.query.date) ? q.query.date : today(), sun = isSun(d);
@@ -398,3 +399,12 @@ app.use(express.static(path.join(__dirname, 'public'), {
 
 
 
+// Vercel ke liye Express app export
+module.exports = app;
+
+// Local computer par server start
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
