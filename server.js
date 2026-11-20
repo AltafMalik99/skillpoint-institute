@@ -386,6 +386,8 @@ app.post('/api/quizzes/:id/submit', auth('student'), async (q, s) => {
 app.get('/api/quizzes/:id/result', auth('student'), async (q, s) => { const z = await myQuiz(q.user, q.params.id), a = await attempt(z.id, q.user.id); if (!a || !a.submitted_at) throw new E('Quiz not completed yet'); s.json(await grade(z, a)) });
 
 
+
+
 app.get('/', (q, s) => {
   s.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
